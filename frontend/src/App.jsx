@@ -68,7 +68,11 @@ const App = props => {
       <Filter onFilterChange={handleFilterChange} genres={genres} />
 
       {errorMessage ? (
-        <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center" role="alert">
+          <strong className="font-bold">Caspita!</strong>
+          <span className="block sm:inline"> {errorMessage}</span>
+
+        </div>
       ) : (
         <MovieList loading={loading}>
           {movies.map((item, key) => (
