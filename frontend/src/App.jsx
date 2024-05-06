@@ -24,7 +24,7 @@ const App = props => {
       setTotalFilm(data.length);
       console.log("Totale:", data.length);
       if (!data.length) {
-        setErrorMessage('Non ci sono film per il rating selezionato.');
+        setErrorMessage('Non ci sono film per il filtro selezionato. Resetta o cambia i filtri.');
         setMovies([]);
       } else {
         setMovies(data);
