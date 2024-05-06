@@ -33,8 +33,8 @@ function Filter({ genres, onFilterChange }) {
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
-            <div className="flex flex-wrap space-x-4 items-center justify-between">
-                <div>
+            <div className="flex flex-wrap  items-center justify-start lg:justify-between">
+                <div className="w-full lg:w-1/6">
                     <label htmlFor="genre" className="block text-sm font-medium text-gray-700">Genere</label>
                     <select
                         id="genre"
@@ -48,7 +48,7 @@ function Filter({ genres, onFilterChange }) {
                         ))}
                     </select>
                 </div>
-                <div>
+                <div className="w-full lg:w-1/6 mt-2">
                     <label htmlFor="sort" className="block text-sm font-medium text-gray-700">Ordina per</label>
                     <select
                         id="sort"
@@ -61,8 +61,8 @@ function Filter({ genres, onFilterChange }) {
                         <option value="rating">Miglior Rating</option>
                     </select>
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Rating Minimo</label>
+                <div className='mt-2 lg:mt-0'>
+                    <label className="block text-sm font-medium text-gray-700">Rating</label>
                     <Rating
                         key={resetCounter}
                         count={10}
@@ -74,7 +74,7 @@ function Filter({ genres, onFilterChange }) {
 
 
                 </div>
-                <div>
+                <div className="w-full lg:w-1/6 lg:mt-2 mt-4 text-center">
                     <button onClick={resetFilters} className="px-4 py-2 bg-slate-500 rounded-full text-white hover:bg-slate-600">
                         Resetta i filtri
                     </button>
