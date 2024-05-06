@@ -1,34 +1,83 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Rating, Spinner } from 'flowbite-react';
+import Filter from './components/Filter';
 
 const App = props => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({});
+  const [genres, setGenres] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [totalFilm, setTotalFilm] = useState(0);
 
-  const fetchMovies = () => {
+
+
+
+  const fetchMovies = async () => {
     setLoading(true);
-
-    return fetch('http://localhost:8000/movies')
-      .then(response => response.json())
-      .then(data => {
+    setErrorMessage('');
+    const query = new URLSearchParams(filters).toString();
+    try {
+      const response = await fetch(`http://localhost:8000/movies?${query}`);
+      const data = await response.json();
+      console.log("film", data);
+      setTotalFilm(data.length);
+      console.log("Totale:", data.length);
+      if (!data.length) {
+        setErrorMessage('Non ci sono film per il rating selezionato.');
+        setMovies([]);
+      } else {
         setMovies(data);
-        setLoading(false);
-      });
-  }
+      }
+    } catch (error) {
+      console.error('Errore nel caricamento dei film:', error);
+      setErrorMessage('Errore nel caricamento dei film.');
+    }
+    setLoading(false);
+  };
+
+
+  const fetchGenres = async () => {
+    const response = await fetch('http://localhost:8000/genres');
+    const data = await response.json();
+    console.log("Generi", data);
+    setGenres(data);
+  };
+
+
 
   useEffect(() => {
     fetchMovies();
-  }, []);
+    fetchGenres();
+  }, [filters]);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
 
   return (
     <Layout>
       <Heading />
 
-      <MovieList loading={loading}>
-        {movies.map((item, key) => (
-          <MovieItem key={key} {...item} />
-        ))}
-      </MovieList>
+      <div className="text-right mb-4 font-bold">Film totali:
+        <span className="inline-flex items-center rounded-md bg-slate-500 px-2 py-1 text-sm font-medium text-white ring-1 ring-inset ring-gray-500/10 ml-2">{totalFilm}</span>
+
+
+      </div>
+
+      <Filter onFilterChange={handleFilterChange} genres={genres} />
+
+      {errorMessage ? (
+        <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+      ) : (
+        <MovieList loading={loading}>
+          {movies.map((item, key) => (
+            <MovieItem key={key} {...item} />
+          ))}
+        </MovieList>
+      )}
+
+
     </Layout>
   );
 };
@@ -89,19 +138,19 @@ const MovieItem = props => {
         <div className="grow mb-3 last:mb-0">
           {props.year || props.rating
             ? <div className="flex justify-between align-middle text-gray-900 text-xs font-medium mb-2">
-                <span>{props.year}</span>
+              <span>{props.year}</span>
 
-                {props.rating
-                  ? <Rating>
-                      <Rating.Star />
+              {props.rating
+                ? <Rating>
+                  <Rating.Star />
 
-                      <span className="ml-0.5">
-                        {props.rating}
-                      </span>
-                    </Rating>
-                  : null
-                }
-              </div>
+                  <span className="ml-0.5">
+                    {props.rating}
+                  </span>
+                </Rating>
+                : null
+              }
+            </div>
             : null
           }
 
@@ -116,13 +165,13 @@ const MovieItem = props => {
 
         {props.wikipediaUrl
           ? <Button
-              color="light"
-              size="xs"
-              className="w-full"
-              onClick={() => window.open(props.wikipediaUrl, '_blank')}
-            >
-              More
-            </Button>
+            color="light"
+            size="xs"
+            className="w-full"
+            onClick={() => window.open(props.wikipediaUrl, '_blank')}
+          >
+            More
+          </Button>
           : null
         }
       </div>
